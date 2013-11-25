@@ -35,7 +35,7 @@
     $.fn.tinycarousel_stop = function () { $(this).data('tcl').stop(); };
     $.fn.tinycarousel_move = function (iNum) { $(this).data('tcl').move(iNum - 1,true); };
 
-    function Carousel(root, options)
+    function Carousel(root, options, type)
     {
         var oSelf     = this
             ,   oViewport = $('.viewport:first', root)
@@ -143,26 +143,45 @@
                 page_Length = oPages.length + 1
 
             iPageSize = bAxis ? $(oPages[0]).outerWidth(true) : $(oPages[0]).outerHeight(true);
-            console.log(iPageSize);
             var iLeftover = Math.ceil(((bAxis ? oViewport.outerWidth() : oViewport.outerHeight()) / (iPageSize * options.display)) -1);
-            console.log(iLeftover);
             iSteps = Math.max(1, Math.ceil(page_Length / (2 * options.display)) - iLeftover);
-            console.log(iSteps);
             iCurrent = Math.min(iSteps, Math.max(1, options.start)) -2;
-            console.log(iCurrent);
             oContent.css(bAxis ? 'width' : 'height', (iPageSize/2 * page_Length));
             oSelf.move(1);
             setEvents();
             return oSelf;
         }
 
-        return initialize();
+        function initialize2 () {
+            iPageSize = bAxis ? $(oPages[0]).outerWidth(true) : $(oPages[0]).outerHeight(true);
+            var iLeftover = Math.ceil(((bAxis ? oViewport.outerWidth() : oViewport.outerHeight()) / (iPageSize * options.display)) -1);
+            iSteps = Math.max(1, Math.ceil(oPages.length / options.display) - iLeftover);
+            iCurrent = Math.min(iSteps, Math.max(1, options.start)) -2;
+            oContent.css(bAxis ? 'width' : 'height', (iPageSize * oPages.length));
+            oSelf.move(1);
+            setEvents();
+            return oSelf;
+        }
+
+        if(type == 1){
+            return initialize();
+        }
+        else{
+            return initialize2();
+        }
     }
 
     $.fn.tinycarousel = function(params)
     {
         var options = $.extend({}, $.tiny.carousel.options, params);
-        this.each(function () { $(this).data('tcl', new Carousel($(this), options)); });
+        this.each(function () { $(this).data('tcl', new Carousel($(this), options, 1)); });
+        return this;
+    };
+
+    $.fn.tinycarousel2 = function(params)
+    {
+        var options = $.extend({}, $.tiny.carousel.options, params);
+        this.each(function () { $(this).data('tcl', new Carousel($(this), options, 2)); });
         return this;
     };
 
