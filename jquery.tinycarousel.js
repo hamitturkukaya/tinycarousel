@@ -137,16 +137,24 @@
 
         function initialize () {
             var page_Length;
-            if(oPages.length%2 == 0)
-                page_Length = oPages.length
-            else
-                page_Length = oPages.length + 1
+            division = Math.ceil(oPages.length/options.display);
+            mod = oPages.length%options.display;
+
+            if(division%2 == 1){
+                page_Length = ((division + 1) * options.display) / 2;
+                if(mod != 0){
+                    page_Length -= (options.display- mod);
+                }
+            }
+            else{
+                page_Length = (division * options.display) / 2;
+            }
 
             iPageSize = bAxis ? $(oPages[0]).outerWidth(true) : $(oPages[0]).outerHeight(true);
             var iLeftover = Math.ceil(((bAxis ? oViewport.outerWidth() : oViewport.outerHeight()) / (iPageSize * options.display)) -1);
-            iSteps = Math.max(1, Math.ceil(page_Length / (2 * options.display)) - iLeftover);
+            iSteps = Math.max(1, Math.ceil(page_Length / options.display) - iLeftover);
             iCurrent = Math.min(iSteps, Math.max(1, options.start)) -2;
-            oContent.css(bAxis ? 'width' : 'height', (iPageSize/2 * page_Length));
+            oContent.css(bAxis ? 'width' : 'height', (iPageSize * page_Length));
             oSelf.move(1);
             setEvents();
             return oSelf;
